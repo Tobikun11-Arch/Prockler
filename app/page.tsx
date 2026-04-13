@@ -9,7 +9,7 @@ import {
   formatDate
 } from '@/lib/date';
 import {createTask, deleteTask, type TaskStatus} from '@/lib/tasks';
-import {useTaskQuery} from '@/hooks/useTasks';
+import {useAllTasks, useTaskQuery} from '@/hooks/useTasks';
 
 const STATUSES: TaskStatus[] = [
   'In Progress',
@@ -44,6 +44,7 @@ export default function HomePage() {
     [selectedDate]
   );
 
+  const allTasks = useAllTasks();
   const todayTasks = useTaskQuery({
     startDate: dateEpoch,
     endDate: dateEpoch + 86399999
@@ -55,6 +56,34 @@ export default function HomePage() {
   const [endTimeStr, setEndTimeStr] = useState('');
   const [status, setStatus] = useState<TaskStatus>('In Progress');
   const [notes, setNotes] = useState('');
+
+  const taskTitleOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const t of allTasks) {
+      const title = (t.taskTitle ?? '').trim();
+      if (!title) continue;
+      const key = title.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(title);
+    }
+    return out;
+  }, [allTasks]);
+
+  const taskCategoryOptions = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const t of allTasks) {
+      const cat = (t.taskCategory ?? '').trim();
+      if (!cat) continue;
+      const key = cat.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(cat);
+    }
+    return out;
+  }, [allTasks]);
 
   const startEpoch = useMemo(
     () => parseTimeToEpoch(selectedDate, startTimeStr),
@@ -134,7 +163,13 @@ export default function HomePage() {
                 value={taskTitle}
                 onChange={e => setTaskTitle(e.target.value)}
                 placeholder="What did you work on?"
+                list="taskTitleOptions"
               />
+              <datalist id="taskTitleOptions">
+                {taskTitleOptions.map(v => (
+                  <option key={v} value={v} />
+                ))}
+              </datalist>
             </div>
 
             <div>
@@ -146,7 +181,13 @@ export default function HomePage() {
                 value={taskCategory}
                 onChange={e => setTaskCategory(e.target.value)}
                 placeholder="Optional"
+                list="taskCategoryOptions"
               />
+              <datalist id="taskCategoryOptions">
+                {taskCategoryOptions.map(v => (
+                  <option key={v} value={v} />
+                ))}
+              </datalist>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

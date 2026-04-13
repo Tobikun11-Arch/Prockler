@@ -19,8 +19,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-[240px_1fr]">
       <aside className="border-r border-border bg-primary text-primary-foreground">
         <div className="p-5 border-b border-border/30">
-          <div className="text-lg font-black tracking-tight">EOD</div>
-          <div className="text-xs opacity-70 tracking-[0.2em] uppercase">Tracker</div>
+          <div className="text-lg font-black tracking-tight">Prockler</div>
         </div>
         <nav className="p-3">
           <div className="flex md:flex-col gap-2 overflow-auto">
