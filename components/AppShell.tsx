@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import Link from 'next/link';
+import {usePathname} from 'next/navigation';
+import type {ReactNode} from 'react';
 
 const nav = [
-  { href: "/", label: "Log Task" },
-  { href: "/daily", label: "Daily View" },
-  { href: "/tasks", label: "Task List" },
-  { href: "/analytics", label: "Analytics" },
-  { href: "/search", label: "Search" },
+  {href: '/dashboard', label: 'Log Task'},
+  {href: '/daily', label: 'Daily View'},
+  {href: '/tasks', label: 'Task List'},
+  {href: '/analytics', label: 'Analytics'},
+  {href: '/search', label: 'Search'}
 ];
 
-export default function AppShell({ children }: { children: ReactNode }) {
+export default function AppShell({children}: {children: ReactNode}) {
   const pathname = usePathname();
 
   return (
@@ -23,7 +23,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </div>
         <nav className="p-3">
           <div className="flex md:flex-col gap-2 overflow-auto">
-            {nav.map((item) => {
+            {nav.map(item => {
               const active = pathname === item.href;
               return (
                 <Link
@@ -31,8 +31,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   href={item.href}
                   className={`px-3 py-2 rounded text-xs tracking-[0.12em] uppercase transition-colors whitespace-nowrap ${
                     active
-                      ? "bg-secondary text-secondary-foreground"
-                      : "hover:bg-secondary/20"
+                      ? 'bg-secondary text-secondary-foreground'
+                      : 'hover:bg-secondary/20'
                   }`}
                 >
                   {item.label}
