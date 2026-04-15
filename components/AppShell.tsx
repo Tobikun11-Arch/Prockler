@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import {usePathname} from 'next/navigation';
+import {usePathname, useRouter} from 'next/navigation';
 import type {ReactNode} from 'react';
+import {useEffect} from 'react';
+import {useAuthStore, type AuthState} from '@/features/auth/authStore';
 
 const nav = [
   {href: '/dashboard', label: 'Log Task'},
@@ -14,12 +16,35 @@ const nav = [
 
 export default function AppShell({children}: {children: ReactNode}) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const hydrate = useAuthStore((s: AuthState) => s.hydrate);
+  const user = useAuthStore((s: AuthState) => s.user);
+  const signOut = useAuthStore((s: AuthState) => s.signOut);
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-[240px_1fr]">
       <aside className="border-r border-border bg-primary text-primary-foreground">
         <div className="p-5 border-b border-border/30">
-          <div className="text-lg font-black tracking-tight">Prockler</div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-lg font-black tracking-tight">Prockler</div>
+            {user ? (
+              <button
+                type="button"
+                className="text-xs tracking-[0.12em] uppercase underline underline-offset-4"
+                onClick={async () => {
+                  await signOut();
+                  router.replace('/');
+                }}
+              >
+                Logout
+              </button>
+            ) : null}
+          </div>
         </div>
         <nav className="p-3">
           <div className="flex md:flex-col gap-2 overflow-auto">
