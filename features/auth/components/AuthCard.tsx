@@ -51,6 +51,13 @@ export default function AuthCard() {
     return 'Send reset link';
   }, [mode]);
 
+  function onKeyDownSubmit(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return;
+    if (isBusy) return;
+    if (mode === 'signup' && password !== confirmPassword) return;
+    e.currentTarget.form?.requestSubmit();
+  }
+
   const title = useMemo(() => {
     if (mode === 'signin') return 'Sign in';
     if (mode === 'signup') return 'Create account';
@@ -151,6 +158,7 @@ export default function AuthCard() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              onKeyDown={onKeyDownSubmit}
               autoComplete="email"
               required
               disabled={isBusy}
@@ -167,6 +175,7 @@ export default function AuthCard() {
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                onKeyDown={onKeyDownSubmit}
                 autoComplete={
                   mode === 'signin' ? 'current-password' : 'new-password'
                 }
@@ -186,6 +195,7 @@ export default function AuthCard() {
                 type="password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
+                onKeyDown={onKeyDownSubmit}
                 autoComplete="new-password"
                 required
                 disabled={isBusy}

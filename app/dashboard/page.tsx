@@ -8,8 +8,10 @@ import {
   formatDuration,
   formatDate
 } from '@/lib/date';
-import {createTask, deleteTask, type TaskStatus} from '@/lib/tasks';
+import {type TaskStatus} from '@/features/tasks/types';
 import {useAllTasks, useTaskQuery} from '@/hooks/useTasks';
+import {useCreateTask, useDeleteTask} from '@/features/tasks/taskQueries';
+import type {Task} from '@/features/tasks/types';
 
 const STATUSES: TaskStatus[] = [
   'In Progress',
@@ -37,6 +39,9 @@ function parseTimeToEpoch(date: Date, timeStr: string): number | null {
 }
 
 export default function DashboardPage() {
+  const createTaskMutation = useCreateTask();
+  const deleteTaskMutation = useDeleteTask();
+
   const [dateStr, setDateStr] = useState(() => toDateInputValue(new Date()));
   const selectedDate = useMemo(() => new Date(dateStr), [dateStr]);
   const dateEpoch = useMemo(
@@ -99,15 +104,19 @@ export default function DashboardPage() {
   );
 
   const todayTotal = useMemo(
-    () => todayTasks.reduce((s, t) => s + (t.durationMinutes ?? 0), 0),
+    () =>
+      todayTasks.reduce(
+        (s: number, t: Task) => s + (t.durationMinutes ?? 0),
+        0
+      ),
     [todayTasks]
   );
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!taskTitle.trim()) return;
 
-    createTask({
+    await createTaskMutation.mutateAsync({
       entryDate: dateEpoch,
       startTime: startEpoch,
       endTime: endEpoch,
@@ -271,7 +280,7 @@ export default function DashboardPage() {
                 No tasks logged yet.
               </div>
             ) : (
-              todayTasks.map(t => (
+              todayTasks.map((t: Task) => (
                 <div
                   key={t.id}
                   className="border border-border bg-background p-3"
@@ -294,7 +303,7 @@ export default function DashboardPage() {
                   <div className="mt-2">
                     <button
                       className="text-xs text-destructive underline underline-offset-2"
-                      onClick={() => deleteTask(t.id)}
+                      onClick={() => deleteTaskMutation.mutate(t.id)}
                       type="button"
                     >
                       Delete

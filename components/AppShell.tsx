@@ -19,12 +19,31 @@ export default function AppShell({children}: {children: ReactNode}) {
   const router = useRouter();
 
   const hydrate = useAuthStore((s: AuthState) => s.hydrate);
+  const status = useAuthStore((s: AuthState) => s.status);
   const user = useAuthStore((s: AuthState) => s.user);
   const signOut = useAuthStore((s: AuthState) => s.signOut);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  useEffect(() => {
+    if (status === 'unauthenticated' && !user) {
+      router.replace('/');
+    }
+  }, [status, user, router]);
+
+  if (!user && (status === 'idle' || status === 'loading')) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-6">
+        <div className="text-sm text-muted-foreground">Loading…</div>
+      </div>
+    );
+  }
+
+  if (!user && status === 'unauthenticated') {
+    return null;
+  }
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-[240px_1fr]">
