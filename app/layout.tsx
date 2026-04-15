@@ -14,8 +14,32 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Prockler',
-  description: 'End of Day Tracker (local-only)'
+  metadataBase: new URL('https://prockler.vercel.app/'),
+  title: "Prockler",
+  description:
+    "Prockler is a productivity app for tracking daily tasks and goals.",
+  icons: {
+    icon: [
+      {url: '/logo.png', type: 'image/png', sizes: '32x32'},
+      {url: '/logo.png', type: 'image/png', sizes: '192x192'}
+    ],
+    apple: '/logo.png'
+  },
+  openGraph: {
+    title: "Prockler",
+    description:
+      "Prockler is a productivity app for tracking daily tasks and goals.",
+    url: 'https://prockler.vercel.app//',
+    type: 'website',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: "Prockler Preview"
+      }
+    ]
+  }
 };
 
 export default function RootLayout({
